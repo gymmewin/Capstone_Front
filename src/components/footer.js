@@ -3,7 +3,7 @@ import React from 'react';
 const Footer = () => {
    return(
       <footer>
-      
+
          <div id="Jimmy">
             <p>© GymmeWin</p>
             <a href="https://www.linkedin.com/in/gymmewin/"> <img src="https://cdn-icons-png.flaticon.com/128/124/124011.png" alt="LinkedIn" className="icons"/></a>

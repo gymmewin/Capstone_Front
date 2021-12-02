@@ -9,6 +9,8 @@ import Add from './components/add.js'
 import Edit from './components/edit.js'
 import Footer from './components/footer.js'
 import Nav from './components/nav.js'
+import Signup from './components/signup.js'
+import Login from './components/login.js'
 
 //Heroku Database
 // const backend_url_prefix = "https://capstone-tickets-frontend.herokuapp.com/"
@@ -87,6 +89,14 @@ const App = () => {
 
                   <Route path="/tickets/add">
                      <Add handleCreate={handleCreate}/>
+                  </Route>
+
+                  <Route path="/users/signup">
+                     <Signup />
+                  </Route>
+
+                  <Route path="/users/login">
+                     <Login />
                   </Route>
 
                </Switch>

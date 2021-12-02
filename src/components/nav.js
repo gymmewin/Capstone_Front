@@ -1,14 +1,15 @@
 import React from 'react'
+import {Link} from 'react-router-dom'
 
 const Nav = () => {
    return(
       <nav className="mt-5">
          <h2>Capstone Tickets</h2>
          <div>
-            <a href="/tickets/login" className="links pr-1">Log In |</a>
-            <a href="/tickets/signup" className="links pr-1">Sign Up |</a>
-            <a href="/tickets/add" className="links">Add | </a>
-            <a href="/tickets" className="links">Home</a>
+            <Link to="/users/login" className="links pr-1">Log In |</Link>
+            <Link to="/users/signup" className="links pr-1">Sign Up |</Link>
+            <Link to="/tickets/add" className="links">Add | </Link>
+            <Link to="/tickets" className="links">Home</Link>
          </div>
       </nav>
    )

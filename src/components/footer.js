@@ -5,7 +5,7 @@ const Footer = () => {
       <footer>
 
          <div id="Jimmy">
-            <p>© GymmeWin</p>
+            <p>©GYMMEWIN</p>
             <a href="https://www.linkedin.com/in/gymmewin/"> <img src="https://cdn-icons-png.flaticon.com/128/124/124011.png" alt="LinkedIn" className="icons"/></a>
 
             <a href="https://github.com/gymmewin"> <img src="https://cdn-icons-png.flaticon.com/128/270/270798.png" alt="Github" className="icons"/> </a>

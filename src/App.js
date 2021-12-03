@@ -19,7 +19,73 @@ const backend_url_prefix = "http://localhost:3000"
 
 const App = () => {
    const [ticket, setTicket] = useState([])
+   const [toggleLogin, setToggleLogin] = useState(true)
+   const [toggleError, setToggleError] = useState(false)
+   const [errorMessage, setErrorMessage] = useState('')
+   const [toggleLogout, setToggleLogout] = useState(false)
+   const [currentUser, setCurrentUser] = useState({})
 
+   //Sign Up Route
+   const handleCreateUser = (user) => {
+      axios
+         .post(backend_url_prefix + '/users/signup', user)
+         .then((response) => {
+         if(response.data.email){
+            console.log(response);
+            setToggleError(false)
+            setErrorMessage('')
+            setCurrentUser(response.data)
+            handleToggleLogout()
+         } else {
+            setErrorMessage(response.data)
+            setToggleError(true)
+         }
+      })
+   }
+
+   //Log In Route
+   const handleLogin = (user) => {
+      axios
+         .put(backend_url_prefix + '/users/login', user)
+         .then((response) => {
+            if(response.data.email){
+               console.log(response);
+               setToggleError(false)
+               setErrorMessage('')
+               setCurrentUser(response.data)
+               handleToggleLogout()
+            } else {
+               console.log(response);
+               setToggleError(true)
+               setErrorMessage(response.data)
+            }
+         })
+   }
+
+   const handleLogout = () => {
+      setCurrentUser({})
+      handleToggleLogout()
+   }
+
+   const handleToggleForm = () => {
+      setToggleError(false)
+      if (toggleLogin === true) {
+         setToggleLogin(false)
+      } else {
+         setToggleLogin(true)
+      }
+   }
+
+   const handleToggleLogout = () => {
+      if (toggleLogout) {
+         setToggleLogout(false)
+      } else {
+         setToggleLogout(true)
+      }
+   }
+
+   //Ticket Routes
+   //Get Route
    const getTicket = () => {
       axios
          .get(backend_url_prefix + '/tickets')
@@ -30,6 +96,7 @@ const App = () => {
          .catch((error) => console.error(error))
    }
 
+   //Create Route
    const handleCreate = (addTicket) => {
       axios
          .post(backend_url_prefix + '/tickets', addTicket)
@@ -39,6 +106,7 @@ const App = () => {
          })
    }
 
+   //Delete Route
    const handleDelete = (event) => {
       axios
          .delete(backend_url_prefix + '/tickets/' + event.target.value)
@@ -48,6 +116,7 @@ const App = () => {
          })
    }
 
+   //Update Route
    const handleUpdate = (editTicket) => {
       axios
          .put(backend_url_prefix + '/tickets/' + editTicket.tickets_id, editTicket)
@@ -92,11 +161,11 @@ const App = () => {
                   </Route>
 
                   <Route path="/users/signup">
-                     <Signup />
+                     <Signup handleCreateUser={handleCreateUser} toggleError={toggleError} errorMessage={errorMessage}/>
                   </Route>
 
                   <Route path="/users/login">
-                     <Login />
+                     <Login handleLogin={handleLogin} toggleError={toggleError} errorMessage={errorMessage}/>
                   </Route>
 
                </Switch>
@@ -108,3 +177,25 @@ const App = () => {
 }
 
 export default App;
+
+// Graveyard
+// <div>
+//    {toggleLogout ?
+//       <button onClick={handleLogout} class='btn'>Logout</button> :
+//       <div class='appFormDiv'>
+//          {toggleLogin ?
+//             <Login handleLogin={handleLogin} toggleError={toggleError} errorMessage={errorMessage}/>
+//             :
+//             <Signup handleCreateUser={handleCreateUser} toggleError={toggleError} errorMessage={errorMessage}/>
+//             }
+//          <button onClick={handleToggleForm} className='btn'>{toggleLogin ? 'Create an account?' : 'Already have an account?'}</button>
+//          </div>
+//    }
+// </div>
+//    {currentUser.username ?
+//       <div>
+//         <h1>Welcome {currentUser.username}</h1>
+//       </div>
+//       :
+//       null
+//     }

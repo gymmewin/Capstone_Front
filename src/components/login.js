@@ -23,7 +23,7 @@ const Login = (props) => {
         <input type='text' className="form-control mb-3" placeholder='email' onChange={(event)=> {setEmail(event.target.value)}}/>
         <input type='password' className="form-control mb-3" placeholder='password' onChange={(event)=> {setPassword(event.target.value)}}/>
         {props.toggleError ?
-          <h5 class='errorMsg'>{props.errorMessage}</h5>
+          <h5 className='errorMsg'>{props.errorMessage}</h5>
           :
           null
         }

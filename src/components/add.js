@@ -12,7 +12,6 @@ const Add = (props) => {
       props.handleCreate(ticket)
       setTicket({item: '', description: ''})
    }
-   // , date: 'current_date', completed: false, notes: ''
 
    return(
       <>

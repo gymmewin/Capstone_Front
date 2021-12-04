@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react'
 import axios from 'axios'
 import './App.css';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
+//moment is a library that allows your to format dates easily
 import moment from 'moment'
 
 //components
@@ -19,26 +20,24 @@ const backend_url_prefix = "http://localhost:3000"
 
 const App = () => {
    const [ticket, setTicket] = useState([])
-   const [toggleLogin, setToggleLogin] = useState(true)
    const [toggleError, setToggleError] = useState(false)
    const [errorMessage, setErrorMessage] = useState('')
    const [toggleLogout, setToggleLogout] = useState(false)
-   const [currentUser, setCurrentUser] = useState({})
+   const [currentUser, setCurrentUser] = useState('')
 
    //Sign Up Route
    const handleCreateUser = (user) => {
       axios
          .post(backend_url_prefix + '/users/signup', user)
          .then((response) => {
-         if(response.data.email){
-            console.log(response);
+         if(response.data){
+            console.log(response.data.error);
             setToggleError(false)
             setErrorMessage('')
             setCurrentUser(response.data)
-            handleToggleLogout()
          } else {
-            setErrorMessage(response.data)
             setToggleError(true)
+            setErrorMessage(response.data.error)
          }
       })
    }
@@ -48,41 +47,24 @@ const App = () => {
       axios
          .put(backend_url_prefix + '/users/login', user)
          .then((response) => {
-            if(response.data.email){
-               console.log(response);
-               setToggleError(false)
-               setErrorMessage('')
-               setCurrentUser(response.data)
-               handleToggleLogout()
-            } else {
-               console.log(response);
-               setToggleError(true)
-               setErrorMessage(response.data)
-            }
+            console.log(response.data[0]);
+            setToggleError(false)
+            setCurrentUser(response.data[0].user_name)
+            setToggleLogout(true)
+
+         })
+         .catch((error) => {
+            console.log(error.response);
+            setToggleError(true)
+            setErrorMessage(error.response.data.error)
          })
    }
 
    const handleLogout = () => {
-      setCurrentUser({})
-      handleToggleLogout()
+      setCurrentUser('')
+      setToggleLogout(false)
    }
 
-   const handleToggleForm = () => {
-      setToggleError(false)
-      if (toggleLogin === true) {
-         setToggleLogin(false)
-      } else {
-         setToggleLogin(true)
-      }
-   }
-
-   const handleToggleLogout = () => {
-      if (toggleLogout) {
-         setToggleLogout(false)
-      } else {
-         setToggleLogout(true)
-      }
-   }
 
    //Ticket Routes
    //Get Route
@@ -101,7 +83,7 @@ const App = () => {
       axios
          .post(backend_url_prefix + '/tickets', addTicket)
          .then((response) => {
-            console.log(response);
+            console.log(addTicket);
             getTicket()
          })
    }
@@ -134,41 +116,51 @@ const App = () => {
       <>
       <Router>
          <div className="container">
-            <Nav />
-               <Switch>
+            <Nav handleLogout={handleLogout} toggleLogout={toggleLogout}/>
+            <Switch>
+               <Route exact path="/tickets">
+                  {currentUser ?
+                     <h3 className="mt-3">{currentUser}'s Ticket List:</h3>
+                     :
+                     <h3 className="mt-3">Ticket List:</h3>
+                  }
+                  <div className="tickets">
+                     {ticket.map((ticket) => {
+                        return(
+                           <div key={ticket.tickets_id}>
+                              <p><span>Item:</span> {ticket.item}</p>
+                              <p><span>Description:</span> {ticket.description}</p>
+                              <p><span>Drop-Off Date:</span> {moment(ticket.dropoff_date).format('MMM Do, YYYY')}</p>
+                              <p><span>Status:</span> {ticket.status}</p>
+                              <p><span>Notes:</span> {ticket.notes}</p>
+                              <Edit handleUpdate={handleUpdate} ticket={ticket}/>
+                              <button onClick={handleDelete} value={ticket.tickets_id} className="btn btn-outline-danger btn-sm">Delete</button>
+                           </div>
+                        )
+                     })}
+                  </div>
+               </Route>
 
-                  <Route exact path="/tickets">
-                     <h3 className="mt-3">Ticket List: </h3>
-                     <div className="tickets">
-                        {ticket.map((ticket) => {
-                           return(
-                              <div key={ticket.tickets_id}>
-                                 <p><span>Item:</span> {ticket.item}</p>
-                                 <p><span>Description:</span> {ticket.description}</p>
-                                 <p><span>Drop-Off Date:</span> {moment(ticket.dropoff_date).format('MMM Do, YYYY')}</p>
-                                 <p><span>Status:</span> {ticket.status}</p>
-                                 <p><span>Notes:</span> {ticket.notes}</p>
-                                 <Edit handleUpdate={handleUpdate} ticket={ticket}/>
-                                 <button onClick={handleDelete} value={ticket.tickets_id} className="btn btn-outline-danger btn-sm">Delete</button>
-                              </div>
-                           )
-                        })}
-                     </div>
-                  </Route>
+               <Route path="/tickets/add">
+                  <Add handleCreate={handleCreate}/>
+               </Route>
 
-                  <Route path="/tickets/add">
-                     <Add handleCreate={handleCreate}/>
-                  </Route>
+               <Route path="/users/signup">
+                  <Signup handleCreateUser={handleCreateUser} toggleError={toggleError} errorMessage={errorMessage}/>
+               </Route>
 
-                  <Route path="/users/signup">
-                     <Signup handleCreateUser={handleCreateUser} toggleError={toggleError} errorMessage={errorMessage}/>
-                  </Route>
+               <Route path="/users/login">
+                  <div className="mt-5 text-center">
+                     {currentUser ?
+                        <h3>Welcome {currentUser}</h3>
+                        :
+                        null
+                     }
+                  </div>
+                  <Login handleLogin={handleLogin} toggleError={toggleError} errorMessage={errorMessage}/>
+               </Route>
 
-                  <Route path="/users/login">
-                     <Login handleLogin={handleLogin} toggleError={toggleError} errorMessage={errorMessage}/>
-                  </Route>
-
-               </Switch>
+            </Switch>
             <Footer />
          </div>
       </Router>
@@ -179,23 +171,20 @@ const App = () => {
 export default App;
 
 // Graveyard
+// 200 or 2xx - no error occured - server was able to complete request without issue
+// 400 - client side issue, the requst the person made was invalid
+// 500 - server side issue, when the server processed your request, something went wrong, unable to finish request.
+//first digit corresponds to what happens
+
 // <div>
 //    {toggleLogout ?
 //       <button onClick={handleLogout} class='btn'>Logout</button> :
-//       <div class='appFormDiv'>
+//       <div>
 //          {toggleLogin ?
 //             <Login handleLogin={handleLogin} toggleError={toggleError} errorMessage={errorMessage}/>
 //             :
 //             <Signup handleCreateUser={handleCreateUser} toggleError={toggleError} errorMessage={errorMessage}/>
 //             }
-//          <button onClick={handleToggleForm} className='btn'>{toggleLogin ? 'Create an account?' : 'Already have an account?'}</button>
-//          </div>
+//       </div>
 //    }
 // </div>
-//    {currentUser.username ?
-//       <div>
-//         <h1>Welcome {currentUser.username}</h1>
-//       </div>
-//       :
-//       null
-//     }

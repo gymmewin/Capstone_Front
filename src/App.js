@@ -48,15 +48,15 @@ const App = () => {
          .put(backend_url_prefix + '/users/login', user)
          .then((response) => {
             console.log(response.data[0]);
-            setToggleError(false)
-            setCurrentUser(response.data[0].user_name)
-            setToggleLogout(true)
-
-         })
-         .catch((error) => {
-            console.log(error.response);
-            setToggleError(true)
-            setErrorMessage(error.response.data.error)
+            try {
+               setToggleError(false)
+               setCurrentUser(response.data[0].user_name)
+               setToggleLogout(true)
+            } catch (error) {
+               console.log(response.data);
+               setToggleError(true)
+               setErrorMessage(response.data.error)
+            }
          })
    }
 

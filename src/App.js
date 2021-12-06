@@ -20,10 +20,13 @@ const backend_url_prefix = "http://localhost:3000"
 
 const App = () => {
    const [ticket, setTicket] = useState([])
+   const [tickets, setTickets] = useState([])
    const [toggleError, setToggleError] = useState(false)
    const [errorMessage, setErrorMessage] = useState('')
+   const [successMessage, setSuccessMessage] = useState('')
    const [toggleLogout, setToggleLogout] = useState(false)
    const [currentUser, setCurrentUser] = useState('')
+   const [currentUser_ID, setCurrentUser_ID] = useState()
 
    //Sign Up Route
    const handleCreateUser = (user) => {
@@ -51,6 +54,7 @@ const App = () => {
             try {
                setToggleError(false)
                setCurrentUser(response.data[0].user_name)
+               setCurrentUser_ID(response.data[0].user_id)
                setToggleLogout(true)
             } catch (error) {
                console.log(response.data);
@@ -62,15 +66,18 @@ const App = () => {
 
    const handleLogout = () => {
       setCurrentUser('')
+      setCurrentUser_ID()
       setToggleLogout(false)
    }
 
 
    //Ticket Routes
+
    //Get Route
    const getTicket = () => {
       axios
-         .get(backend_url_prefix + '/tickets')
+         .get(backend_url_prefix + '/tickets/')
+         // .get(backend_url_prefix + '/tickets/' + currentUser_ID)
          .then(
             (response) => setTicket(response.data),
             (error) => console.error(error)
@@ -78,13 +85,27 @@ const App = () => {
          .catch((error) => console.error(error))
    }
 
+   //USER Get Route
+   // const getTickets = () => {
+   //    axios
+   //       .get(backend_url_prefix + '/tickets/' + currentUser_ID)
+   //       .then(
+   //          (response) => setTickets(response.data),
+   //          (error) => console.error(error)
+   //       )
+   //       .catch((error) => console.error(error))
+   // }
+
    //Create Route
    const handleCreate = (addTicket) => {
       axios
          .post(backend_url_prefix + '/tickets', addTicket)
          .then((response) => {
             console.log(addTicket);
+            console.log(response.data.message);
+            setSuccessMessage(response.data.message)
             getTicket()
+
          })
    }
 
@@ -109,14 +130,14 @@ const App = () => {
    }
 
    useEffect(() => {
-      getTicket()
+         getTicket()
    }, [])
 
    return(
       <>
       <Router>
          <div className="container">
-            <Nav handleLogout={handleLogout} toggleLogout={toggleLogout}/>
+            <Nav handleLogout={handleLogout} toggleLogout={toggleLogout} setSuccessMessage={setSuccessMessage}/>
             <Switch>
                <Route exact path="/tickets">
                   {currentUser ?
@@ -142,7 +163,7 @@ const App = () => {
                </Route>
 
                <Route path="/tickets/add">
-                  <Add handleCreate={handleCreate}/>
+                  <Add handleCreate={handleCreate} currentUser_ID={currentUser_ID} successMessage={successMessage}/>
                </Route>
 
                <Route path="/users/signup">
@@ -161,6 +182,7 @@ const App = () => {
                </Route>
 
             </Switch>
+            <br/>
             <Footer />
          </div>
       </Router>
@@ -171,20 +193,8 @@ const App = () => {
 export default App;
 
 // Graveyard
+
 // 200 or 2xx - no error occured - server was able to complete request without issue
 // 400 - client side issue, the requst the person made was invalid
 // 500 - server side issue, when the server processed your request, something went wrong, unable to finish request.
 //first digit corresponds to what happens
-
-// <div>
-//    {toggleLogout ?
-//       <button onClick={handleLogout} class='btn'>Logout</button> :
-//       <div>
-//          {toggleLogin ?
-//             <Login handleLogin={handleLogin} toggleError={toggleError} errorMessage={errorMessage}/>
-//             :
-//             <Signup handleCreateUser={handleCreateUser} toggleError={toggleError} errorMessage={errorMessage}/>
-//             }
-//       </div>
-//    }
-// </div>

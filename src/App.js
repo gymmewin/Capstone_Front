@@ -20,7 +20,6 @@ const backend_url_prefix = "http://localhost:3000"
 
 const App = () => {
    const [ticket, setTicket] = useState([])
-   const [tickets, setTickets] = useState([])
    const [toggleError, setToggleError] = useState(false)
    const [errorMessage, setErrorMessage] = useState('')
    const [successMessage, setSuccessMessage] = useState('')
@@ -68,33 +67,24 @@ const App = () => {
       setCurrentUser('')
       setCurrentUser_ID()
       setToggleLogout(false)
+      setTicket([])
    }
-
 
    //Ticket Routes
 
    //Get Route
    const getTicket = () => {
       axios
-         .get(backend_url_prefix + '/tickets/')
-         // .get(backend_url_prefix + '/tickets/' + currentUser_ID)
+         //gets all tickets
+         // .get(backend_url_prefix + '/tickets/')
+         //gets only tickets belonging to user
+         .get(backend_url_prefix + '/tickets/' + currentUser_ID)
          .then(
             (response) => setTicket(response.data),
             (error) => console.error(error)
          )
          .catch((error) => console.error(error))
    }
-
-   //USER Get Route
-   // const getTickets = () => {
-   //    axios
-   //       .get(backend_url_prefix + '/tickets/' + currentUser_ID)
-   //       .then(
-   //          (response) => setTickets(response.data),
-   //          (error) => console.error(error)
-   //       )
-   //       .catch((error) => console.error(error))
-   // }
 
    //Create Route
    const handleCreate = (addTicket) => {
@@ -130,8 +120,10 @@ const App = () => {
    }
 
    useEffect(() => {
-         getTicket()
-   }, [])
+         if (currentUser_ID) {
+            getTicket()
+         }
+   }, [currentUser_ID])
 
    return(
       <>

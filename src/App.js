@@ -14,7 +14,7 @@ import Signup from './components/signup.js'
 import Login from './components/login.js'
 
 //Heroku Database
-const backend_url_prefix = "https://capstone-tickets-backend.herokuapp.com/"
+const backend_url_prefix = "https://capstone-tickets-backend.herokuapp.com"
 //Local Database
 // const backend_url_prefix = "http://localhost:3000"
 

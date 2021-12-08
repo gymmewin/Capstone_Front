@@ -33,7 +33,7 @@ const App = () => {
          .post(backend_url_prefix + '/users/signup', user)
          .then((response) => {
          if(response.data){
-            console.log(response.data.error);
+            console.log(response.data);
             setToggleError(false)
             setCurrentUser(response.data)
          } else {
@@ -132,9 +132,9 @@ const App = () => {
             <Switch>
                <Route exact path="/tickets">
                   {currentUser ?
-                     <h3 className="mt-3">{currentUser}'s Ticket List:</h3>
+                     <h3 className="mt-5 text-center">{currentUser}'s Ticket List:</h3>
                      :
-                     <h3 className="mt-3">Ticket List:</h3>
+                     <h4 className="mt-5 text-center">Welcome to Capstone Tickets. This app was designed for users to be able to create an account and submit service / repair tickets for their items. This app can be marketed for any type of business. The company can choose to use this internally  or for customer requests. Create an account or log in to test the app.</h4>
                   }
                   <div className="tickets">
                      {ticket.map((ticket) => {

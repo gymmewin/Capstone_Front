@@ -74,10 +74,20 @@ const App = () => {
    //Get Route
    const getTicket = () => {
       axios
-         //gets all tickets
-         // .get(backend_url_prefix + '/tickets/')
          //gets only tickets belonging to user
          .get(backend_url_prefix + '/tickets/' + currentUser_ID)
+         .then(
+            (response) => setTicket(response.data),
+            (error) => console.error(error)
+         )
+         .catch((error) => console.error(error))
+   }
+
+   //Admin Get All Route
+   const getTickets = () => {
+      axios
+         //gets all tickets
+         .get(backend_url_prefix + '/tickets/admin')
          .then(
             (response) => setTicket(response.data),
             (error) => console.error(error)
@@ -94,7 +104,6 @@ const App = () => {
             console.log(response.data.message);
             setSuccessMessage(response.data.message)
             getTicket()
-
          })
    }
 
@@ -104,7 +113,11 @@ const App = () => {
          .delete(backend_url_prefix + '/tickets/' + event.target.value)
          .then((response) => {
             console.log(event.target.value);
-            getTicket()
+            if (currentUser_ID === 1) {
+               getTickets()
+            } if (currentUser_ID !==1 && currentUser_ID){
+               getTicket()
+            }
          })
    }
 
@@ -114,12 +127,18 @@ const App = () => {
          .put(backend_url_prefix + '/tickets/' + editTicket.tickets_id, editTicket)
          .then((response) => {
             console.log(editTicket);
-            getTicket()
+            if (currentUser_ID === 1) {
+               getTickets()
+            } if (currentUser_ID !==1 && currentUser_ID){
+               getTicket()
+            }
          })
    }
 
    useEffect(() => {
-         if (currentUser_ID) {
+         if (currentUser_ID === 1) {
+            getTickets()
+         } if (currentUser_ID !==1 && currentUser_ID){
             getTicket()
          }
    }, [currentUser_ID])

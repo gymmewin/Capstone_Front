@@ -14,7 +14,7 @@ const Nav = (props) => {
                <div>
                   <Link to="/tickets/add" className="links" onClick={resetSuccessMessage}>Add | </Link>
                   <Link to="/tickets" className="links pr-1" onClick={resetSuccessMessage}>Home</Link>
-                  <button onClick={props.handleLogout} className='btn btn-outline-danger'>Logout</button>
+                  <button onClick={props.handleLogout} className='btn btn-outline-danger btn-sm'>Logout</button>
                </div>
                :
                <div>

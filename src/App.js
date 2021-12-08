@@ -14,9 +14,9 @@ import Signup from './components/signup.js'
 import Login from './components/login.js'
 
 //Heroku Database
-// const backend_url_prefix = "https://capstone-tickets-frontend.herokuapp.com/"
+const backend_url_prefix = "https://capstone-tickets-backend.herokuapp.com/"
 //Local Database
-const backend_url_prefix = "http://localhost:3000"
+// const backend_url_prefix = "http://localhost:3000"
 
 const App = () => {
    const [ticket, setTicket] = useState([])
@@ -35,7 +35,6 @@ const App = () => {
          if(response.data){
             console.log(response.data.error);
             setToggleError(false)
-            setErrorMessage('')
             setCurrentUser(response.data)
          } else {
             setToggleError(true)
@@ -159,7 +158,7 @@ const App = () => {
                </Route>
 
                <Route path="/users/signup">
-                  <Signup handleCreateUser={handleCreateUser} toggleError={toggleError} errorMessage={errorMessage}/>
+                  <Signup handleCreateUser={handleCreateUser} toggleError={toggleError} errorMessage={errorMessage} successMessage={successMessage}/>
                </Route>
 
                <Route path="/users/login">

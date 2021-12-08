@@ -29,7 +29,8 @@ const Signup = (props) => {
           :
           null
         }
-        <input type='submit' value='Sign Up' className='btn btn-outline-success'/>
+        <input type='submit' value='Sign Up' className='btn btn-outline-success mr-3'/>
+        {props.successMessage}
       </form>
     </div>
   );
